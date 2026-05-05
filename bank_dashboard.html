@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bank Analytics Pro+</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: linear-gradient(135deg, #fef9ff, #ecfeff);
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #7c3aed;
+}
+
+/* STATS */
+.stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+.stat {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    width: 30%;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.stat h2 {
+    margin: 5px;
+    color: #2563eb;
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+</head>
+
+<body>
+
+<div class="header"> Smart Bank Analytics Dashboard</div>
+
+<div class="stats">
+    <div class="stat">
+        <h4>Total Balance</h4>
+        <h2 id="total">₹0</h2>
+    </div>
+    <div class="stat">
+        <h4>Total Users</h4>
+        <h2>3</h2>
+    </div>
+    <div class="stat">
+        <h4>Transactions</h4>
+        <h2 id="txn">0</h2>
+    </div>
+</div>
+
+<div class="grid">
+<div id="bar" class="card"></div>
+<div id="pie" class="card"></div>
+<div id="radar" class="card"></div>
+<div id="scatter" class="card"></div>
+<div id="area" class="card"></div>
+<div id="heatmap" class="card"></div>
+<div id="gauge" class="card"></div>
+<div id="sankey" class="card"></div>
+</div>
+
+<script>
+
+// COLORS (SOFT + ATTRACTIVE)
+let colors = ["#60a5fa", "#34d399", "#f472b6"];
+
+let names = ["Vidyashree", "Pallavi", "Rachana"];
+let balances = [5000, 8000, 12000];
+let expenses = [2000, 3000, 2500];
+let txn = 50;
+
+// BAR
+Plotly.newPlot('bar', [{
+    x:names,
+    y:balances,
+    type:'bar',
+    marker:{color:colors}
+}]);
+
+// PIE
+Plotly.newPlot('pie', [{
+    labels:names,
+    values:balances,
+    type:'pie',
+    marker:{colors:colors}
+}]);
+
+// RADAR
+Plotly.newPlot('radar', [{
+    type:'scatterpolar',
+    r:expenses,
+    theta:names,
+    fill:'toself',
+    line:{color:"#8b5cf6"}
+}]);
+
+// SCATTER
+Plotly.newPlot('scatter', [{
+    x:balances,
+    y:expenses,
+    mode:'markers',
+    marker:{color:"#f59e0b", size:10}
+}]);
+
+// AREA
+Plotly.newPlot('area', [{
+    x:names,
+    y:balances,
+    fill:'tozeroy',
+    line:{color:"#06b6d4"}
+}]);
+
+// HEATMAP
+Plotly.newPlot('heatmap', [{
+    z:[[10,20,30],[20,10,40],[30,40,10]],
+    x:names,
+    y:names,
+    type:'heatmap',
+    colorscale:'Blues'
+}]);
+
+// GAUGE
+Plotly.newPlot('gauge', [{
+    type:"indicator",
+    mode:"gauge+number",
+    value:70,
+    gauge:{bar:{color:"#22c55e"}}
+}]);
+
+// SANKEY
+Plotly.newPlot('sankey', [{
+    type:"sankey",
+    node:{label:["Bank",...names]},
+    link:{
+        source:[0,0,0],
+        target:[1,2,3],
+        value:balances,
+        color:["#60a5fa","#34d399","#f472b6"]
+    }
+}]);
+
+
+// REAL-TIME
+setInterval(() => {
+
+    balances = balances.map(v => v + Math.random()*500);
+    expenses = expenses.map(v => v + Math.random()*200);
+    txn += Math.floor(Math.random()*5);
+
+    let total = balances.reduce((a,b)=>a+b,0);
+
+    document.getElementById("total").innerText = "₹" + Math.floor(total);
+    document.getElementById("txn").innerText = txn;
+
+    Plotly.update('bar',{y:[balances]});
+    Plotly.update('pie',{values:[balances]});
+    Plotly.update('radar',{r:[expenses]});
+    Plotly.update('scatter',{x:[balances],y:[expenses]});
+    Plotly.update('area',{y:[balances]});
+    Plotly.update('sankey',{value:[balances]});
+    Plotly.update('gauge',{value:[60+Math.random()*30]});
+
+},3000);
+
+</script>
+
+</body>
+</html>
